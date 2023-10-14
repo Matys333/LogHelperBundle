@@ -1,0 +1,32 @@
+{
+  "name": "matys333/loghelperbundle",
+  "description": "Simple Symfony bundle to help deal with your logs",
+  "type": "symfony-bundle",
+  "minimum-stability": "stable",
+  "keywords": [
+    "symfony log helper bundle"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Matěj Votruba",
+      "email": "fsfmatej@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "ext-zip": "*",
+    "symfony/framework-bundle": "6.3.*",
+    "symfony/scheduler": "6.3.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Matys333\\LogHelperBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Matys333\\LogHelperBundle\\Tests\\": "tests/"
+    }
+  }
+}
