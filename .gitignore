@@ -1,3 +1,4 @@
+.env.local
 .idea/
 vendor/
 docker-compose.yml

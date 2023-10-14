@@ -1,6 +1,6 @@
 <?php
 
-namespace TomAtom\JobQueueBundle\Message;
+namespace Matys333\LogHelperBundle\Message;
 
 class LogMessage
 {
