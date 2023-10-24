@@ -64,6 +64,11 @@ class LogMessageHandler
 
         // Foreach all defined logs
         foreach ($this->logs as $log) {
+            // Do not handle the log helper log file only
+            if ($log === $this->selfLogFileName) {
+                continue;
+            }
+
             // Get the log file path
             $logFileName = $log . '.log';
             $logFilePath = $this->logsPath . $logFileName;
