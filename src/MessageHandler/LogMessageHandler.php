@@ -6,26 +6,29 @@ use DateTimeImmutable;
 use Matys333\LogHelperBundle\Message\LogMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\Log\Logger;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use ZipArchive;
 
 #[AsMessageHandler]
 class LogMessageHandler
 {
-    private LoggerInterface $logger;
-
-    const LOGS_PATH = 'var/log/';
-
-    const LOGS_BACKUP_PATH = self::LOGS_PATH . 'backup/';
-
-    const LOGS = [
+    private string $logsPath = 'var/log/';
+    private string $logsBackupPath = 'var/log/backup/';
+    private string $selfLogFileName = 'log_helper';
+    private array $logs = [
         'dev',
         'prod'
     ];
+    private LoggerInterface $logger;
 
-    public function __construct(LoggerInterface $logger)
+    public function __construct(?string $logsPath, ?string $logsBackupPath, ?string $selfLogFileName, ?array $logs)
     {
-        $this->logger = $logger;
+        $this->logsPath = $logsPath ?? $this->logsPath;
+        $this->logsBackupPath = $logsBackupPath ?? $this->logsBackupPath;
+        $this->selfLogFileName = $selfLogFileName ?? $this->selfLogFileName;
+        $this->logs = $logs ?? $this->logs;
+        $this->logger = new Logger(null, $this->logsPath . '/' . $this->selfLogFileName . '.log');
     }
 
     public function __invoke(LogMessage $message): bool
@@ -35,7 +38,7 @@ class LogMessageHandler
         $day = $dateTime->format('d');
         $fileSystem = new Filesystem();
         $zip = new ZipArchive();
-        $backupFolderMonth = self::LOGS_BACKUP_PATH . $month;
+        $backupFolderMonth = $this->logsBackupPath . $month;
         $backupFolderDay = $backupFolderMonth . '/' . $day;
 
         // If backup folder already exist we do not want to do anything
@@ -60,14 +63,16 @@ class LogMessageHandler
         }
 
         // Foreach all defined logs
-        foreach (self::LOGS as $log) {
+        foreach ($this->logs as $log) {
+            // Get the log file path
             $logFileName = $log . '.log';
-            $logFilePath = self::LOGS_PATH . $logFileName;
-            // Add log file to the zip archive
-            $backupFilename = $backupFolderDay . '/' . $log . '.zip';
-            if ($zip->open($backupFilename, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
-                // Ensure the file exists before adding it to the zip archive
-                if (file_exists($logFilePath)) {
+            $logFilePath = $this->logsPath . $logFileName;
+            // Ensure the file exists before adding it to the zip archive
+            if (file_exists($logFilePath)) {
+                // Get the backup log file path
+                $backupFilename = $backupFolderDay . '/' . $log . '.zip';
+                // Add log file to the zip archive
+                if ($zip->open($backupFilename, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
                     if ($zip->addFile($logFilePath, basename($logFilePath))) {
                         $this->logger->info($logFilePath . ' was successfully backed up.');
                     } else {
@@ -75,7 +80,7 @@ class LogMessageHandler
                         return false;
                     }
                 } else {
-                    $this->logger->error('Log file does not exist!');
+                    $this->logger->error('Failed to create the zip file!');
                     return false;
                 }
                 // Close the zip archive
@@ -83,7 +88,7 @@ class LogMessageHandler
                 // Remove the old log file
                 $fileSystem->remove($logFilePath);
             } else {
-                $this->logger->error('Failed to create the zip file!');
+                $this->logger->error('Log file does not exist!');
                 return false;
             }
         }
