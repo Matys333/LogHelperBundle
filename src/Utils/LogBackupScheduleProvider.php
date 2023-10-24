@@ -16,7 +16,7 @@ class LogBackupScheduleProvider implements ScheduleProviderInterface
         $message = new LogMessage();
 
         return (new Schedule())->add(
-            RecurringMessage::every('3 seconds', $message)
+            RecurringMessage::every('10 seconds', $message)
         );
     }
 }

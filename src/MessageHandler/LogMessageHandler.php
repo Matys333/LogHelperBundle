@@ -33,22 +33,38 @@ class LogMessageHandler
         $dateTime = new DateTimeImmutable();
         $month = $dateTime->format('m');
         $day = $dateTime->format('d');
+        $fileSystem = new Filesystem();
+        $zip = new ZipArchive();
+        $backupFolderMonth = self::LOGS_BACKUP_PATH . $month;
+        $backupFolderDay = $backupFolderMonth . '/' . $day;
+
+        // If backup folder already exist we do not want to do anything
+        if (!empty(is_dir($backupFolderDay))) {
+            $this->logger->warning('Log backups folder ' . $backupFolderDay . ' already exists!');
+            return false;
+        }
+
+        // Otherwise try to create new backup folder
+        if (empty(is_dir($backupFolderMonth))) {
+            // First for month
+            if (!mkdir($backupFolderMonth, 0777, true)) {
+                $this->logger->error('Log backups month folder ' . $backupFolderMonth . ' failed to create!');
+                return false;
+            }
+        }
+
+        if (!mkdir($backupFolderDay)) {
+            // Then for the day
+            $this->logger->error('Log backups folder ' . $backupFolderDay . ' failed to create!');
+            return false;
+        }
 
         // Foreach all defined logs
         foreach (self::LOGS as $log) {
-            $fileSystem = new Filesystem();
-            $zip = new ZipArchive();
             $logFileName = $log . '.log';
             $logFilePath = self::LOGS_PATH . $logFileName;
-            $backupFolder = self::LOGS_BACKUP_PATH . $month . '/' . $day;
-
-            // Create new backup folder if it does not exist
-            if (empty(is_dir($backupFolder))) {
-                mkdir($backupFolder, 0777, true);
-            }
-
             // Add log file to the zip archive
-            $backupFilename = $backupFolder . '/' . $log . '.zip';
+            $backupFilename = $backupFolderDay . '/' . $log . '.zip';
             if ($zip->open($backupFilename, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
                 // Ensure the file exists before adding it to the zip archive
                 if (file_exists($logFilePath)) {
