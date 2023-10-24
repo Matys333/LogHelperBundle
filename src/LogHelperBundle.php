@@ -26,6 +26,8 @@ class LogHelperBundle extends AbstractBundle
 
     public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
+        $container->import('../config/services.xml');
+
         $container->services()
             ->get('log.helper.message_handler')
             ->arg(0, $config['backups']['logs_path'])

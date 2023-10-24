@@ -22,7 +22,7 @@ class LogMessageHandler
     ];
     private LoggerInterface $logger;
 
-    public function __construct(?string $logsPath, ?string $logsBackupPath, ?string $selfLogFileName, ?array $logs)
+    public function __construct(?string $logsPath = null, ?string $logsBackupPath = null, ?string $selfLogFileName = null, ?array $logs = null)
     {
         $this->logsPath = $logsPath ?? $this->logsPath;
         $this->logsBackupPath = $logsBackupPath ?? $this->logsBackupPath;
