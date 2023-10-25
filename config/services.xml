@@ -5,12 +5,13 @@
         https://symfony.com/schema/dic/services/services-1.0.xsd"
 >
     <services>
-        <service id="log.helper.message_handler" class="Matys333\LogHelperBundle\MessageHandler\LogMessageHandler">
-            <!-- Will be filled in with dynamically -->
-            <argument>%log_helper.backups.logs_path%</argument>
-            <argument>%log_helper.backups.logs_backup_path%</argument>
-            <argument>%log_helper.backups.self_log_file_name%</argument>
-            <argument>%log_helper.backups.logs%</argument>
+        <service id="log.helper.message_handler" class="Matys333\LogHelperBundle\MessageHandler\LogMessageHandler"
+                 autowire="true" autoconfigure="true">
+            <!-- Will be filled in with IDs dynamically -->
+            <argument/>
+            <argument/>
+            <argument/>
+            <argument/>
         </service>
     </services>
 </container>

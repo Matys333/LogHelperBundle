@@ -6,26 +6,18 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
-
 {
-    /**
-     * @return TreeBuilder
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('log_helper');
-        $rootNode = $treeBuilder->getRootNode();
 
-        $rootNode
+        $treeBuilder->getRootNode()
             ->children()
-            ->arrayNode('backups')
-            ->children()
-            ->scalarNode('logs_path')->defaultNull()->end()
-            ->scalarNode('logs_backup_path')->defaultNull()->end()
-            ->scalarNode('self_log_file_name')->defaultNull()->end()
-            ->scalarNode('logs')->defaultNull()->end()
+            ->scalarNode('logs_path')->defaultValue('var/log/')->end()
+            ->scalarNode('logs_backup_path')->defaultValue('var/log/backup')->end()
+            ->scalarNode('self_log_file_name')->defaultValue('log_helper')->end()
+            ->scalarNode('logs')->defaultValue('dev, prod')->end()
             ->end()
-            ->end() // backups
             ->end();
 
         return $treeBuilder;

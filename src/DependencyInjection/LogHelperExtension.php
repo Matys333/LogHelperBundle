@@ -18,22 +18,26 @@ class LogHelperExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container): void
     {
+        $loaderXml = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
+        $loaderXml->load('services.xml');
+        $loaderYaml = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
+        $loaderYaml->load('services.yaml');
+
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
+        $definition = $container->getDefinition('log.helper.message_handler');
 
-        if (!empty($config['backups'])) {
-            $container->setParameter('log_helper.backups.logs_path', $config['backups']['logs_path']);
-            $container->setParameter('log_helper.backups.logs_backup_path', $config['backups']['logs_backup_path']);
-            $container->setParameter('log_helper.backups.self_log_file_name', $config['backups']['self_log_file_name']);
-            $container->setParameter('log_helper.backups.logs', $config['backups']['logs']);
+        if (!empty($config['logs_path'])) {
+            $definition->replaceArgument(0, $config['logs_path']);
         }
-
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
-        $loader->load('services.xml');
-    }
-
-    public function getAlias(): string
-    {
-        return "log_helper";
+        if (!empty($config['logs_backup_path'])) {
+            $definition->replaceArgument(1, $config['logs_backup_path']);
+        }
+        if (!empty($config['self_log_file_name'])) {
+            $definition->replaceArgument(2, $config['self_log_file_name']);
+        }
+        if (!empty($config['logs'])) {
+            $definition->replaceArgument(3, $config['logs']);
+        }
     }
 }

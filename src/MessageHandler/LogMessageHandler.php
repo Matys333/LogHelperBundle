@@ -13,13 +13,10 @@ use ZipArchive;
 #[AsMessageHandler]
 class LogMessageHandler
 {
-    private string $logsPath = 'var/log/';
-    private string $logsBackupPath = 'var/log/backup/';
-    private string $selfLogFileName = 'log_helper';
-    private array $logs = [
-        'dev',
-        'prod'
-    ];
+    private ?string $logsPath = null;
+    private ?string $logsBackupPath = null;
+    private ?string $selfLogFileName = null;
+    private ?array $logs = null;
     private LoggerInterface $logger;
 
     public function __construct(?string $logsPath = null, ?string $logsBackupPath = null, ?string $selfLogFileName = null, ?string $logs = null)
@@ -27,7 +24,7 @@ class LogMessageHandler
         $this->logsPath = $logsPath ?? $this->logsPath;
         $this->logsBackupPath = $logsBackupPath ?? $this->logsBackupPath;
         $this->selfLogFileName = $selfLogFileName ?? $this->selfLogFileName;
-        $this->logs = $logs ?? $this->logs;
+        $this->logs = $logs ? explode(',', $logs) : $this->logs;
         $this->logger = new Logger(null, $this->logsPath . '/' . $this->selfLogFileName . '.log');
     }
 
