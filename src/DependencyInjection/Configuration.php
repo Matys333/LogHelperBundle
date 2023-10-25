@@ -14,7 +14,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder->getRootNode()
             ->children()
             ->scalarNode('logs_path')->defaultValue('var/log/')->end()
-            ->scalarNode('logs_backup_path')->defaultValue('var/log/backup')->end()
+            ->scalarNode('logs_backup_path')->defaultValue('var/log/backup/')->end()
             ->scalarNode('self_log_file_name')->defaultValue('log_helper')->end()
             ->scalarNode('logs')->defaultValue('dev, prod')->end()
             ->end()
