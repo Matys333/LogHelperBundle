@@ -7,10 +7,10 @@
     <services>
         <service id="log.helper.message_handler" class="Matys333\LogHelperBundle\MessageHandler\LogMessageHandler">
             <!-- Will be filled in with dynamically -->
-            <argument id="log.helper.logs_path"/>
-            <argument id="log.helper.logs_backup_path"/>
-            <argument id="log.helper.self_log_file_name"/>
-            <argument id="log.helper.logs"/>
+            <argument>%log_helper.backups.logs_path%</argument>
+            <argument>%log_helper.backups.logs_backup_path%</argument>
+            <argument>%log_helper.backups.self_log_file_name%</argument>
+            <argument>%log_helper.backups.logs%</argument>
         </service>
     </services>
 </container>
