@@ -11,12 +11,19 @@ use Symfony\Component\Scheduler\ScheduleProviderInterface;
 #[AsSchedule('log_backup')]
 class LogBackupScheduleProvider implements ScheduleProviderInterface
 {
+    private string $frequency;
+
+    public function __construct(string $frequency)
+    {
+        $this->frequency = $frequency;
+    }
+
     public function getSchedule(): Schedule
     {
         $message = new LogMessage();
 
         return (new Schedule())->add(
-            RecurringMessage::every('10 seconds', $message)
+            RecurringMessage::every($this->frequency, $message)
         );
     }
 }

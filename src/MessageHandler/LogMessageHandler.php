@@ -15,18 +15,33 @@ use ZipArchive;
 class LogMessageHandler
 {
     private ?string $logsPath;
-    private ?string $logsBackupPath;
     private ?string $selfLogFileName;
     private ?array $logs;
+    private ?bool $backup;
+    private ?int $removeWaitDays;
+    private ?string $logsBackupPath;
+    private ?bool $removeBackups;
+    private ?int $removeBackupsWaitDays;
     private LoggerInterface $logger;
 
-    public function __construct(?string $logsPath = null, ?string $logsBackupPath = null, ?string $selfLogFileName = null, ?string $logs = null)
+    public function __construct(?string $logsPath = null,
+                                ?string $selfLogFileName = null,
+                                ?string $logs = null,
+                                ?bool   $backup = null,
+                                ?int    $removeWaitDays = null,
+                                ?string $logsBackupPath = null,
+                                ?bool   $removeBackups = null,
+                                ?int    $removeBackupsWaitDays = null)
     {
         // Ensure that the configurations are in a right format
         $this->logsPath = trim($logsPath, '/') . '/';
-        $this->logsBackupPath = trim($logsBackupPath, '/') . '/';
         $this->selfLogFileName = rtrim($selfLogFileName, '.log');
         $this->logs = array_map('trim', explode(',', trim($logs, ',')));
+        $this->backup = $backup;
+        $this->removeWaitDays = $removeWaitDays;
+        $this->logsBackupPath = trim($logsBackupPath, '/') . '/';
+        $this->removeBackups = $removeBackups;
+        $this->removeBackupsWaitDays = $removeBackupsWaitDays;
         $this->logger = new Logger(LogLevel::DEBUG, $this->logsPath . '/' . $this->selfLogFileName . '.log');
     }
 
@@ -81,25 +96,26 @@ class LogMessageHandler
 
             // Ensure the file exists before adding it to the zip archive
             if (file_exists($logFilePath)) {
-                // Add log file to the zip archive
-                if ($zip->open($backupFilename, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
-                    if ($zip->addFile($logFilePath, basename($logFilePath))) {
-                        $this->logger->info($logFilePath . ' was successfully backed up.');
+                // Add log file to the zip archive if backup was true in config
+                if ($this->backup) {
+                    if ($zip->open($backupFilename, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+                        if ($zip->addFile($logFilePath, basename($logFilePath))) {
+                            $this->logger->info($logFilePath . ' was successfully backed up.');
+                        } else {
+                            $this->logger->error('There was an error while backing up file ' . $logFilePath);
+                            continue;
+                        }
                     } else {
-                        $this->logger->error('There was an error while backing up file ' . $logFilePath);
-                        return false;
+                        $this->logger->error('Failed to create the zip file!');
+                        continue;
                     }
-                } else {
-                    $this->logger->error('Failed to create the zip file!');
-                    return false;
+                    // Close the zip archive
+                    $zip->close();
+                    // Remove the old log file
+                    $fileSystem->remove($logFilePath);
                 }
-                // Close the zip archive
-                $zip->close();
-                // Remove the old log file
-                $fileSystem->remove($logFilePath);
             } else {
                 $this->logger->error('Log file ' . $logFilePath . ' does not exist!');
-                return false;
             }
         }
 

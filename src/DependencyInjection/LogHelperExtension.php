@@ -22,22 +22,40 @@ class LogHelperExtension extends Extension
         $loaderXml->load('services.xml');
         $loaderYaml = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
         $loaderYaml->load('services.yaml');
-
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-        $definition = $container->getDefinition('log.helper.message_handler');
 
-        if (!empty($config['logs_path'])) {
-            $definition->replaceArgument(0, $config['logs_path']);
+        $scheduleProviderDefinition = $container->getDefinition('log.helper.schedule_provider');
+        $messageHandlerDefinition = $container->getDefinition('log.helper.message_handler');
+        // Schedule provider
+        if (!empty($config['frequency'])) {
+            $scheduleProviderDefinition->replaceArgument(0, $config['frequency']);
         }
-        if (!empty($config['logs_backup_path'])) {
-            $definition->replaceArgument(1, $config['logs_backup_path']);
+        // Message handler
+        if (!empty($config['logs_path'])) {
+            $messageHandlerDefinition->replaceArgument(0, $config['logs_path']);
         }
         if (!empty($config['self_log_file_name'])) {
-            $definition->replaceArgument(2, $config['self_log_file_name']);
+            $messageHandlerDefinition->replaceArgument(1, $config['self_log_file_name']);
         }
         if (!empty($config['logs'])) {
-            $definition->replaceArgument(3, $config['logs']);
+            $messageHandlerDefinition->replaceArgument(2, $config['logs']);
+        }
+        if (!empty($config['backup'])) {
+            $messageHandlerDefinition->replaceArgument(3, $config['backup']);
+        }
+        if (!empty($config['remove_wait_days'])) {
+            $messageHandlerDefinition->replaceArgument(4, (int)$config['remove_wait_days']);
+        }
+
+        if (!empty($config['backups']['logs_backup_path'])) {
+            $messageHandlerDefinition->replaceArgument(5, $config['backups']['logs_backup_path']);
+        }
+        if (!empty($config['backups']['remove_backups'])) {
+            $messageHandlerDefinition->replaceArgument(6, $config['backups']['remove_backups']);
+        }
+        if (!empty($config['backups']['remove_backups_wait_days'])) {
+            $messageHandlerDefinition->replaceArgument(7, (int)$config['backups']['remove_backups_wait_days']);
         }
     }
 }

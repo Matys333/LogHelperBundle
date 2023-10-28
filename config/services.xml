@@ -12,6 +12,16 @@
             <argument/>
             <argument/>
             <argument/>
+            <argument/>
+            <argument/>
+            <argument/>
+            <argument/>
+            <argument/>
+        </service>
+        <service id="log.helper.schedule_provider" class="Matys333\LogHelperBundle\Utils\LogBackupScheduleProvider"
+                 autowire="true" autoconfigure="true">
+            <!-- Will be filled in with IDs dynamically -->
+            <argument/>
         </service>
     </services>
 </container>
