@@ -5,10 +5,9 @@
         https://symfony.com/schema/dic/services/services-1.0.xsd"
 >
     <services>
-        <service id="log.helper.message" class="Matys333\LogHelperBundle\Message\LogMessage"
+        <service id="log.helper.message_provider" class="Matys333\LogHelperBundle\Utils\LogBackupScheduleProvider"
                  autowire="true" autoconfigure="true">
             <!-- Will be filled in with IDs dynamically -->
-            <argument/>
             <argument/>
             <argument/>
             <argument/>

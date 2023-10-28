@@ -25,7 +25,7 @@ class LogHelperExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $messageDefinition = $container->getDefinition('log.helper.message');
+        $messageDefinition = $container->getDefinition('log.helper.message_provider');
         if (!empty($config['frequency'])) {
             $messageDefinition->replaceArgument(0, $config['frequency']);
         }

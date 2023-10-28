@@ -14,15 +14,15 @@ class LogMessage
     private ?bool $removeBackups;
     private ?int $removeBackupsWaitDays;
 
-    public function __construct(?string $frequency = null,
-                                ?string $logsPath = null,
-                                ?string $selfLogFileName = null,
-                                ?string $logs = null,
-                                ?bool   $backup = null,
-                                ?int    $removeWaitDays = null,
-                                ?string $logsBackupPath = null,
-                                ?bool   $removeBackups = null,
-                                ?int    $removeBackupsWaitDays = null)
+    public function __construct(?string $frequency,
+                                ?string $logsPath,
+                                ?string $selfLogFileName,
+                                ?string $logs,
+                                ?bool   $backup,
+                                ?int    $removeWaitDays,
+                                ?string $logsBackupPath,
+                                ?bool   $removeBackups,
+                                ?int    $removeBackupsWaitDays)
     {
         // Ensure that the configurations are in a right format
         $this->frequency = $frequency;
@@ -41,19 +41,9 @@ class LogMessage
         return $this->frequency;
     }
 
-    public function setFrequency(?string $frequency): void
-    {
-        $this->frequency = $frequency;
-    }
-
     public function getLogsPath(): ?string
     {
         return $this->logsPath;
-    }
-
-    public function setLogsPath(?string $logsPath): void
-    {
-        $this->logsPath = $logsPath;
     }
 
     public function getSelfLogFileName(): ?string
@@ -61,19 +51,9 @@ class LogMessage
         return $this->selfLogFileName;
     }
 
-    public function setSelfLogFileName(?string $selfLogFileName): void
-    {
-        $this->selfLogFileName = $selfLogFileName;
-    }
-
     public function getLogs(): ?array
     {
         return $this->logs;
-    }
-
-    public function setLogs(?array $logs): void
-    {
-        $this->logs = $logs;
     }
 
     public function getBackup(): ?bool
@@ -81,19 +61,9 @@ class LogMessage
         return $this->backup;
     }
 
-    public function setBackup(?bool $backup): void
-    {
-        $this->backup = $backup;
-    }
-
     public function getRemoveWaitDays(): ?int
     {
         return $this->removeWaitDays;
-    }
-
-    public function setRemoveWaitDays(?int $removeWaitDays): void
-    {
-        $this->removeWaitDays = $removeWaitDays;
     }
 
     public function getLogsBackupPath(): ?string
@@ -101,28 +71,13 @@ class LogMessage
         return $this->logsBackupPath;
     }
 
-    public function setLogsBackupPath(?string $logsBackupPath): void
-    {
-        $this->logsBackupPath = $logsBackupPath;
-    }
-
     public function getRemoveBackups(): ?bool
     {
         return $this->removeBackups;
     }
 
-    public function setRemoveBackups(?bool $removeBackups): void
-    {
-        $this->removeBackups = $removeBackups;
-    }
-
     public function getRemoveBackupsWaitDays(): ?int
     {
         return $this->removeBackupsWaitDays;
-    }
-
-    public function setRemoveBackupsWaitDays(?int $removeBackupsWaitDays): void
-    {
-        $this->removeBackupsWaitDays = $removeBackupsWaitDays;
     }
 }
